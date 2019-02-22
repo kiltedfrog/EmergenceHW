@@ -360,10 +360,15 @@ MechanicalResourceGatherer.prototype.update = function () {
 		for (var i = 0; i < this.game.resources.length; i++){
 			var ent = this.game.resources[i];
 			var d = distance(this, ent);
-			if(d<closest && ){
 
+			if(!ent.isTargettedAlly && d < closest){
+				closest = d;
+				if(this.target){
+					this.target.isTargettedAlly = false;
+				}
+				this.target = ent;
+				this.target.isTargettedAlly = true;
 			}
-
 		}
 	}
 	// update angle
