@@ -313,18 +313,18 @@ function PrototypeLevel(game) {
 	this.background = new MainBackground(this.game, AM.getAsset("./img/4kBackground1.png"));
 	this.game.addEntity(this.background);
 	this.entities.push(this.background);
-	this.layer1 = new BackgroundLayer(this.game, AM.getAsset("./img/PScroll1/cloud.png"));
-	this.game.addEntity(this.layer1);
-	this.entities.push(this.layer1);
-	this.layer2 = new BackgroundLayer(this.game, AM.getAsset("./img/PScroll1/comet.png"));
-	this.game.addEntity(this.layer2);
-	this.entities.push(this.layer2);
-	this.layer3 = new BackgroundLayer(this.game, AM.getAsset("./img/PScroll1/planet1.png"));
-	this.game.addEntity(this.layer3);
-	this.entities.push(this.layer3);
-	this.layer4 = new BackgroundLayer(this.game, AM.getAsset("./img/PScroll1/planet2.png"));
-	this.game.addEntity(this.layer4);
-	this.entities.push(this.layer4);
+	// this.layer1 = new BackgroundLayer(this.game, AM.getAsset("./img/PScroll1/cloud.png"));
+	// this.game.addEntity(this.layer1);
+	// this.entities.push(this.layer1);
+	// this.layer2 = new BackgroundLayer(this.game, AM.getAsset("./img/PScroll1/comet.png"));
+	// this.game.addEntity(this.layer2);
+	// this.entities.push(this.layer2);
+	// this.layer3 = new BackgroundLayer(this.game, AM.getAsset("./img/PScroll1/planet1.png"));
+	// this.game.addEntity(this.layer3);
+	// this.entities.push(this.layer3);
+	// this.layer4 = new BackgroundLayer(this.game, AM.getAsset("./img/PScroll1/planet2.png"));
+	// this.game.addEntity(this.layer4);
+	// this.entities.push(this.layer4);
 
 	//this spawns and places the player base
 	this.rock1 = new Asteroid(this.game, 300, 300);
