@@ -8,7 +8,7 @@ function Reticle(game) {
 	this.scale = 0.25;
 	this.reticleAnimation = new Animation(AM.getAsset("./img/shipReticle.png"), this.pWidth, this.pHeight, 256, 0.5, 2, true, this.scale);
 
-	this.name = "Extra";
+	this.name = "Reticle";
 	this.game = game;
 	this.ctx = game.ctx;
 	this.removeFromWorld = false;
@@ -159,10 +159,10 @@ RepairDrop.prototype.draw = function () {
 
 //SCRAP
 
-function Scrap(game) {
+function Scrap(game, value) {
 	this.pWidth = 96;
 	this.pHeight = 106;
-	this.scale = .5;
+	this.scale = .5 * (value/10);
 	this.animation = new Animation(AM.getAsset("./img/scrap.png"), this.pWidth, this.pHeight, 288, 0.15, 3, true, this.scale);
 
 	this.name = "Resource";
@@ -172,7 +172,7 @@ function Scrap(game) {
 	this.yMid = 0;
 	this.radius = this.scale * 42;
 	this.angle = Math.random() * Math.PI * 2;
-	this.value = 10;
+	this.value = value;
 	this.speed = 1;
 
 	this.isTargettedAlly = false;
