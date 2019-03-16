@@ -34,7 +34,7 @@ function SpaceStation(game, x, y, rock) {
 	this.powerLevel = -1;
 
 	//the spawns that the spawner 'owns'
-	this.chromaTimerReset = 275;
+	this.chromaTimerReset = 175;
 	this.chromaTimer = this.chromaTimerReset;
 	this.spawns = 0;
 	this.maxGatherers = 5;
