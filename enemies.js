@@ -594,7 +594,8 @@ Boss1.prototype = new Entity();
 Boss1.prototype.constructor = Boss1;
 Boss1.prototype.SaveOutput = function () {
 	return{x:this.x, y:this.y, health:this.health, name: this.name, type: "Boss",
-	 t1Health:this.turret1.health, t2Health:this.turret2.health, t3Health:this.turret3.health, t4Health:this.turret4.health};
+	 t1Health:this.turret1.health, t2Health:this.turret2.health,
+	  t3Health:this.turret3.health, t4Health:this.turret4.health};
 };
 
 Boss1.prototype.update = function () {
