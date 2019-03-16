@@ -20,7 +20,7 @@ function AlienSpaceStation(game, x, y, rock) {
     this.game = game;
     this.ctx = game.ctx;
     this.removeFromWorld = false;
-	this.maxHealth = 750;
+	this.maxHealth = 500;
 	this.health = this.maxHealth;
 	this.hasBeenDestroyed = false;
 
@@ -59,22 +59,9 @@ AlienSpaceStation.prototype.constructor = AlienSpaceStation;
 
 AlienSpaceStation.prototype.update = function () {
 	this.game.enemyResources += this.resourceIncr;
-    if(this.health < 1){
-    	SCORE += 10;
-    	this.removeFromWorld = true;
-    	this.asteroid.hasbase = false;
-    	this.asteroid.base = null;
-    	this.generateItem(25);
-    	this.generateScrap(15, 13);
-    	this.hasBeenDestroyed = true;
-    	this.game.numOfBosses--;
 
-
-    	var explosion = new BloodyMess(this.game, this.x, this.y, (Math.random * 360) * Math.PI / 180, 5, this);
-		this.game.addEntity(explosion);
-	}
 	if(!this.removeFromWorld && this.health < this.maxHealth){
-		this.health += 0.5;
+		this.health += 0.15;
 	}
 	//shooting
 	var closest = 100000000;
@@ -201,6 +188,20 @@ AlienSpaceStation.prototype.update = function () {
 				ent.removeFromWorld = true;
 			}
 		}
+	}
+	if(this.health < 1){
+    	SCORE += 10;
+    	this.removeFromWorld = true;
+    	this.asteroid.hasbase = false;
+    	this.asteroid.base = null;
+    	this.generateItem(25);
+    	this.generateScrap(15, 13);
+    	this.hasBeenDestroyed = true;
+    	this.game.numOfBosses--;
+
+
+    	var explosion = new BloodyMess(this.game, this.x, this.y, (Math.random * 360) * Math.PI / 180, 5, this);
+		this.game.addEntity(explosion);
 	}
 	if (this.removeFromWorld) {
 		this.game.enemyResources += 1000;

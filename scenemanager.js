@@ -868,7 +868,7 @@ function Level1(game) {
 	this.entities.push(this.rock2);
 
 	this.enemySpaceStation = new AlienSpaceStation(this.game, randX, randY, this.rock2);
-	this.enemySpaceStation.resourceIncr = .375;
+	this.enemySpaceStation.resourceIncr = .4;
 	this.game.addEntity(this.enemySpaceStation);
 	this.entities.push(this.enemySpaceStation);
 

@@ -23,7 +23,7 @@ function SpaceStation(game, x, y, rock) {
     this.game = game;
     this.ctx = game.ctx;
     this.removeFromWorld = false;
-	this.maxHealth = 1000;
+	this.maxHealth = 500;
     this.health = this.maxHealth;
 
 	this.weaponType = "P0";
@@ -50,15 +50,7 @@ SpaceStation.prototype.constructor = SpaceStation;
 
 SpaceStation.prototype.update = function () {
 	this.game.playerResources += this.resourceIncr;
-    if(this.health < 1){
-      this.removeFromWorld = true;
-	  this.asteroid.hasbase = false;
-	  this.asteroid.base = null;
-	  return;
-	}
-	if(this.health < this.maxHealth){
-		this.health += 1;
-	}
+
 
 //Shooting
 	if (true){
@@ -152,6 +144,19 @@ SpaceStation.prototype.update = function () {
 	}
 
 
+	if (this.game.playerResources > 1000){
+		this.maxSpawn++;
+		this.game.playerResources -= 1000;
+	}
+	if(this.health < 1){
+	  this.removeFromWorld = true;
+	  this.asteroid.hasbase = false;
+	  this.asteroid.base = null;
+	  return;
+	}
+	if(this.health < this.maxHealth){
+		this.health += 1;
+	}
 
 	this.generateGatherer -= 1;
 	this.chromaTimer--;
