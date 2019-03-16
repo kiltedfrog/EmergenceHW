@@ -5,7 +5,7 @@ function SpaceStation(game, x, y, rock) {
     //Specific to spawners:
     this.gathererTimerReset = 200;
     this.generateGatherer = this.gathererTimerReset;
-    this.maxSpawn = 3; // maybe make this a difficulty variable.
+    
 
     this.pWidth = 256;
     this.pHeight = 256;
@@ -37,6 +37,7 @@ function SpaceStation(game, x, y, rock) {
 	this.chromaTimerReset = 175;
 	this.chromaTimer = this.chromaTimerReset;
 	this.spawns = 0;
+	this.maxSpawn = 9;
 	this.maxGatherers = 5;
 	this.gatherers = 0;
 	this.maxBuilders = 1;
