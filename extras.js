@@ -19,6 +19,7 @@ function Reticle(game) {
 Reticle.prototype = new Entity();
 Reticle.prototype.constructor = Reticle;
 
+
 Reticle.prototype.update = function () {
 	this.x = this.game.mouseX - (this.pWidth * this.scale / 2);
 	this.y = this.game.mouseY - (this.pHeight * this.scale / 2);
@@ -325,6 +326,9 @@ function Scrap(game, value) {
 
 Scrap.prototype = new Entity();
 Scrap.prototype.constructor = Scrap;
+Scrap.prototype.SaveOutput = function () {
+	return{x:this.x, y:this.y, lifetime: this.lifetime, name: this.name, type: "Scrap", value: this.value};
+};
 
 Scrap.prototype.update = function () {
 

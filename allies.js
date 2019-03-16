@@ -47,6 +47,10 @@ function SpaceStation(game, x, y, rock) {
 }
 SpaceStation.prototype = new Entity();
 SpaceStation.prototype.constructor = SpaceStation;
+SpaceStation.prototype.SaveOutput = function () {
+	return{x:this.x, y:this.y, health:this.health, name: this.name, type: "Base"};
+};
+
 
 SpaceStation.prototype.update = function () {
 	this.game.playerResources += this.resourceIncr;
@@ -265,7 +269,9 @@ function MechanicalResourceGatherer(game, spawner) {
 
 MechanicalResourceGatherer.prototype = new Entity();
 MechanicalResourceGatherer.prototype.constructor = MechanicalResourceGatherer;
-
+MechanicalResourceGatherer.prototype.SaveOutput = function () {
+	return{x:this.x, y:this.y, health:this.health, name: this.name, type: "Gatherer"};
+};
 MechanicalResourceGatherer.prototype.draw = function () {
 	if(onCamera(this)){
   		this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, this.angle);
@@ -405,6 +411,9 @@ function PlayerBuilder(game, spawner) {
 
 PlayerBuilder.prototype = new Entity();
 PlayerBuilder.prototype.constructor = PlayerBuilder;
+PlayerBuilder.prototype.SaveOutput = function () {
+	return{x:this.x, y:this.y, health:this.health, name: this.name, type: "Builder"};
+};
 
 PlayerBuilder.prototype.draw = function () {
 	if(onCamera(this)){
@@ -552,6 +561,11 @@ function PurpleChroma(game, spawner) {
 
 PurpleChroma.prototype = new Entity();
 PurpleChroma.prototype.constructor = PurpleChroma;
+PurpleChroma.prototype.SaveOutput = function () {
+	return{x:this.x, y:this.y, health:this.health, name: this.name, type: "Purple"};
+};
+
+
 PurpleChroma.prototype.createProjectile = function(type, offset, adjustAngle) {
 	var dist = 1000 * distance({xMid: this.xMid, yMid: this.yMid},
 							   {xMid: this.target.xMid, yMid: this.target.yMid});
@@ -724,6 +738,11 @@ function GreenChroma(game, spawner) {
 
 GreenChroma.prototype = new Entity();
 GreenChroma.prototype.constructor = GreenChroma;
+
+GreenChroma.prototype.SaveOutput = function () {
+	return{x:this.x, y:this.y, health:this.health, name: this.name, type: "Green"};
+};
+
 GreenChroma.prototype.createProjectile = function(type, offset, adjustAngle) {
 	var dist = 1000 * distance({xMid: this.xMid, yMid: this.yMid},
 							   {xMid: this.target.xMid, yMid: this.target.yMid});
@@ -893,6 +912,10 @@ function RedChroma(game, spawner) {
 
 RedChroma.prototype = new Entity();
 RedChroma.prototype.constructor = RedChroma;
+RedChroma.prototype.SaveOutput = function () {
+	return{x:this.x, y:this.y, health:this.health, name: this.name, type: "Red"};
+};
+
 RedChroma.prototype.createProjectile = function(type, offset, adjustAngle) {
 	var dist = 1000 * distance({xMid: this.xMid, yMid: this.yMid},
 							   {xMid: this.target.xMid, yMid: this.target.yMid});
@@ -1063,6 +1086,11 @@ function BlackWhiteChroma(game, spawner) {
 
 BlackWhiteChroma.prototype = new Entity();
 BlackWhiteChroma.prototype.constructor = BlackWhiteChroma;
+
+BlackWhiteChroma.prototype.SaveOutput = function () {
+	return{x:this.x, y:this.y, health:this.health, name: this.name, type: "BlackWhite"};
+};
+
 BlackWhiteChroma.prototype.createProjectile = function(type, offset, adjustAngle) {
 	var dist = 1000 * distance({xMid: this.xMid, yMid: this.yMid},
 							   {xMid: this.target.xMid, yMid: this.target.yMid});

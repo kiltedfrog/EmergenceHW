@@ -17,11 +17,11 @@ function SceneManager(game) {
 SceneManager.prototype.constructor = SceneManager;
 
 SceneManager.prototype.reset = function () {
-	this.game.running = false;
-	this.game.playerResources = 0;
-	this.game.enemyResources = 0;
-	this.game.ship.health = 100;
-	this.game.numOfBosses = 1;
+	// this.game.running = false;
+	// this.game.playerResources = 0;
+	// this.game.enemyResources = 0;
+	// this.game.ship.health = 100;
+	// this.game.numOfBosses = 1;
 
 
 	for (var i = 0; i < this.game.player.length; i++) {
@@ -51,9 +51,9 @@ SceneManager.prototype.reset = function () {
 	for (var i = 0; i < this.game.effects.length; i++) {
 		this.game.effects[i].removeFromWorld = true;
 	}
-	for (var i = 0; i < this.game.levels.length; i++) {
-		this.game.levels[i].removeFromWorld = true;
-	}
+	// for (var i = 0; i < this.game.levels.length; i++) {
+	// 	this.game.levels[i].removeFromWorld = true;
+	// }
 }
 
 SceneManager.prototype.update = function () {

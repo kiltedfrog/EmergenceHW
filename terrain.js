@@ -35,6 +35,20 @@ function Asteroid(game, x, y) {
 }
 Asteroid.prototype = new Entity();
 Asteroid.prototype.constructor = Asteroid;
+
+Asteroid.prototype.SaveOutput = function () {
+	if (!this.hasbase){
+		return{x:this.x, y:this.y, name: this.name, type: "Terrain"};
+	} else{
+		if(this.base.name === "Ally"){
+			return{x:this.x, y:this.y, health:this.base.health, name: this.name, type: "Ally"};
+		} else {
+			return{x:this.x, y:this.y, health:this.base.health, name: this.name, type: "Enemy"};
+		}
+	}
+};
+
+
 Asteroid.prototype.draw = function () {
 	if(onCamera(this)){
   		this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, this.angle);

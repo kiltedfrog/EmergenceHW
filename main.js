@@ -1,3 +1,185 @@
+window.onload = function () {
+  var socket = io.connect("http://24.16.255.56:8888");
+
+  socket.on("load", function (data) {
+      console.log(data);
+	  GAME.sceneManager.reset();
+	  var i = 0;
+
+	  for (i = 0; i < data.data.length; i++){
+		  console.log(data.data[i]);
+		  if(data.data[i].name === "Ally"){
+
+			if(data.data[i].type === "Purple"){
+				var ent = new PurpleChroma(GAME, {spawns:0});
+			} else if (data.data[i].type === "Green"){
+			  	var ent = new GreenChroma(GAME, {spawns:0});
+			} else if (data.data[i].type === "Red"){
+			  	var ent = new RedChroma(GAME, {spawns:0});
+			} else if (data.data[i].type === "BlackWhite"){
+			  	var ent = new BlackWhiteChroma(GAME, {spawns:0});
+			} else if (data.data[i].type === "Gatherer"){
+			  	var ent = new MechanicalResourceGatherer(GAME, {spawns:0});
+			} else if (data.data[i].type === "Base"){
+			  	var ent = new PlayerBuilder(GAME, {spawns:0});
+			}  else if (data.data[i].type === "Builder"){
+			  	var ent = new PlayerBuilder(GAME, {spawns:0});
+			}
+
+			ent.health = data.data[i].health;
+			ent.x = data.data[i].x;
+			ent.y = data.data[i].y;
+
+		//	console.log(ent);
+			GAME.addEntity(ent);
+
+		} else if (data.data[i].name === "Enemy"){
+			if(data.data[i].type === "Scourge"){
+				var ent = new Scourge(GAME,0,0, {spawns:0});
+			} else if (data.data[i].type === "Leech"){
+				var ent = new Leech(GAME,0,0, {spawns:0});
+			} else if (data.data[i].type === "Stalker"){
+				var ent = new Stalker(GAME,0,0, {spawns:0});
+			} else if (data.data[i].type === "Gatherer"){
+				var ent = new BiologicalResourceGatherer(GAME, {spawns:0});
+			} else if (data.data[i].type === "Builder"){
+				var ent = new AlienBuilder(GAME, {spawns:0});
+			} else if (data.data[i].type === "Base"){
+				var ent = new AlienBuilder(GAME, {spawns:0});
+			} else if (data.data[i].type === "Boss"){
+				var ent = new Boss1(GAME);
+				ent.turret1.health = data.data[i].t1Health;
+				ent.turret2.health = data.data[i].t2Health;
+				ent.turret3.health = data.data[i].t3Health;
+				ent.turret4.health = data.data[i].t4Health;
+			} else if (data.data[i].type === "BossTurret"){
+				var ent = new Scrap(GAME, 0);
+				ent.lifetime = 0;
+			}
+
+
+			ent.health = data.data[i].health;
+
+			ent.x = data.data[i].x;
+			ent.y = data.data[i].y;
+
+		//	console.log(ent);
+			GAME.addEntity(ent);
+		} else if (data.data[i].name === "Terrain"){
+			GAME.addEntity(new Asteroid(GAME, data.data[i].x,data.data[i].y));
+		} else if (data.data[i].name === "PlayerProjectile"){
+			if (data.data[i].type === "ShipPrimary0"){
+				var ent = new ShipPrimary0(GAME,1);
+			} else if (data.data[i].type === "ShipPrimary1"){
+				var ent = new ShipPrimary1(GAME,1);
+			} else if (data.data[i].type === "ShipPrimary2"){
+				var ent = new ShipPrimary2(GAME,1);
+			} else if (data.data[i].type === "ShipSecondary0"){
+				var ent = new ShipSecondary0(GAME);
+			} else if (data.data[i].type === "ShipSecondary1"){
+				var ent = new ShipSecondary1(GAME);
+			}
+			ent.x = data.data[i].x;
+			ent.y = data.data[i].y;
+			ent.lifetime = data.data[i].lifetime;
+			ent.velocity = data.data[i].velocity;
+
+			//console.log(ent);
+			GAME.addEntity(ent);
+		} else if (data.data[i].name === "EnemyProjectile"){
+			if(data.data[i].type === "Spit"){
+				var ent = new Spit(GAME, 1);
+			} else if (data.data[i].type === "Laser") {
+				var ent = new LaserBlast(GAME,0);
+			}
+			ent.x = data.data[i].x;
+			ent.y = data.data[i].y;
+			ent.lifetime = data.data[i].lifetime;
+			ent.velocity = data.data[i].velocity;
+			console.log(ent);
+			GAME.addEntity(ent);
+		} else if (data.data[i].name === "Resource"){
+			var ent = new Scrap(GAME, data.data[i].value);
+			ent.x = data.data[i].x;
+			ent.y = data.data[i].y;
+			ent.lifetime = data.data[i].lifetime;
+			//console.log(ent);
+			GAME.addEntity(ent);
+		} else if(data.data[i].name ==="ResourceCounts"){
+			GAME.playerResources = data.data[i].player;
+			GAME.enemyResources = data.data[i].enemy;
+
+		}
+
+
+
+	  }
+
+
+
+  });
+
+  var text = document.getElementById("text");
+  var saveButton = document.getElementById("save");
+  var loadButton = document.getElementById("load");
+
+  saveButton.onclick = function () {
+    console.log("save");
+    text.innerHTML = "Saved."
+	var saveData = [];
+	var j = 0;
+	var i = 0;
+	//allies
+	for(i = 0; i < GAME.allies.length; i++){
+		saveData[j] = GAME.allies[i].SaveOutput();
+
+		j++;
+	}
+	//ally bullets
+	for(i = 0; i < GAME.playerProjectiles.length; i++){
+		saveData[j] = GAME.playerProjectiles[i].SaveOutput();
+
+		j++;
+	}
+	//terrain
+	for(i = 0; i < GAME.terrain.length; i++){
+		saveData[j] = GAME.terrain[i].SaveOutput();
+
+		j++;
+	}
+	//enemy
+	for(i = 0; i < GAME.enemies.length; i++){
+		saveData[j] = GAME.enemies[i].SaveOutput();
+
+		j++;
+	}
+	//enemyProjectiles
+	for(i = 0; i < GAME.enemyProjectiles.length; i++){
+		saveData[j] = GAME.enemyProjectiles[i].SaveOutput();
+	//	console.log(GAME.enemyProjectiles[i].SaveOutput());
+		j++;
+	}
+	//resources
+	for(i = 0; i < GAME.resources.length; i++){
+		saveData[j] = GAME.resources[i].SaveOutput();
+
+		j++;
+	}
+	saveData[j] = {name: "ResourceCounts", enemy: GAME.enemyResources, player: GAME.playerResources};
+
+
+    socket.emit("save", { studentname: "Kelsey Oxford", statename: "SimState", data: saveData });
+  };
+
+  loadButton.onclick = function () {
+    console.log("load");
+    text.innerHTML = "Loaded."
+    socket.emit("load", { studentname: "Kelsey Oxford", statename: "SimState" });
+  };
+
+};
+
+
 // useful global things here
 var SHOW_HITBOX = false;
 var SCORE = 0;
@@ -507,6 +689,7 @@ BackgroundLayer.prototype.update = function () {
 /* ========================================================================================================== */
 
 var AM = new AssetManager();
+var GAME = new GameEngine();
 //Background
 AM.queueDownload("./img/level1mainAlt.png");
 AM.queueDownload("./img/gasGiantsNebulaLayer.png");
@@ -643,25 +826,25 @@ AM.downloadAll(function () {
 	var ctx = canvas.getContext("2d");
 
 
-	var gameEngine = new GameEngine();
-	gameEngine.ctx = ctx;
-	gameEngine.init(ctx, cameraCtx);
-	gameEngine.running = false;
+
+	GAME.ctx = ctx;
+	GAME.init(ctx, cameraCtx);
+	GAME.running = false;
 
 
-	var sm = new SceneManager(gameEngine);
-	var ship = new TheShip(gameEngine);
-	var reticle = new Reticle(gameEngine);
+	var sm = new SceneManager(GAME);
+	var ship = new TheShip(GAME);
+	var reticle = new Reticle(GAME);
 
 
 
-	gameEngine.addEntity(ship);
-	gameEngine.addEntity(reticle);
+	GAME.addEntity(ship);
+	GAME.addEntity(reticle);
 
-	gameEngine.ship = ship;
-	gameEngine.cameraTrick = cameraTrick;
-	gameEngine.camera = new Camera(gameEngine);
-	gameEngine.sceneManager = sm;
-	gameEngine.start();
+	GAME.ship = ship;
+	GAME.cameraTrick = cameraTrick;
+	GAME.camera = new Camera(GAME);
+	GAME.sceneManager = sm;
+	GAME.start();
 	console.log("All Done!");
 });

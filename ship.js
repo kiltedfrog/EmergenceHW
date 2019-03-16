@@ -93,6 +93,10 @@ function TheShip(game) {
 TheShip.prototype = new Entity();
 TheShip.prototype.constructor = TheShip;
 
+TheShip.prototype.SaveOutput = function () {
+	return{x:this.x, y:this.y, health:this.health, name: this.name, type: "Player"};
+};
+
 TheShip.prototype.update = function () {
 	if (!this.game.running) return;
 
@@ -676,6 +680,7 @@ function ShipPrimary0(game, adjustScale) {	// laser
 ShipPrimary0.prototype = new Entity();
 ShipPrimary0.prototype.constructor = ShipPrimary0;
 
+
 ShipPrimary0.prototype.update = function () {
 	this.x += this.velocity.x * this.game.clockTick;
 	this.y += this.velocity.y * this.game.clockTick;
@@ -1109,3 +1114,21 @@ ShipSecondary1.prototype.draw = function () {
 
 	Entity.prototype.draw.call(this);
 }
+ShipPrimary0.prototype.SaveOutput = function () {
+	return{x:this.x, y:this.y, lifetime: this.lifetime, name: this.name, type: "ShipPrimary0", velocity: this.velocity};
+};
+ShipPrimary1.prototype.SaveOutput = function () {
+	return{x:this.x, y:this.y, lifetime: this.lifetime, name: this.name, type: "ShipPrimary1", velocity: this.velocity};
+};
+ShipPrimary2.prototype.SaveOutput = function () {
+	return{x:this.x, y:this.y, lifetime: this.lifetime, name: this.name, type: "ShipPrimary2", velocity: this.velocity};
+};
+ShipPrimary3.prototype.SaveOutput = function () {
+	return{x:this.x, y:this.y, lifetime: this.lifetime, name: this.name, type: "ShipPrimary3", velocity: this.velocity};
+};
+ShipSecondary0.prototype.SaveOutput = function () {
+	return{x:this.x, y:this.y, lifetime: this.lifetime, name: this.name, type: "ShipSecondary0", velocity: this.velocity};
+};
+ShipSecondary1.prototype.SaveOutput = function () {
+	return{x:this.x, y:this.y, lifetime: this.lifetime, name: this.name, type: "ShipSecondary1", velocity: this.velocity};
+};

@@ -2,7 +2,7 @@
 // Spawner - alien space station
 /* ========================================================================================================== */
 function AlienSpaceStation(game, x, y, rock) {
-	console.log("new enemy station");
+	//console.log("new enemy station");
 
     this.pWidth = 256;
     this.pHeight = 256;
@@ -56,6 +56,9 @@ function AlienSpaceStation(game, x, y, rock) {
 }
 AlienSpaceStation.prototype = new Entity();
 AlienSpaceStation.prototype.constructor = AlienSpaceStation;
+AlienSpaceStation.prototype.SaveOutput = function () {
+	return{x:this.x, y:this.y, health:this.health, name: this.name, type: "Base"};
+};
 
 AlienSpaceStation.prototype.update = function () {
 	this.game.enemyResources += this.resourceIncr;
@@ -294,6 +297,9 @@ function BiologicalResourceGatherer(game, spawner) {
 
 BiologicalResourceGatherer.prototype = new Entity();
 BiologicalResourceGatherer.prototype.constructor = BiologicalResourceGatherer;
+BiologicalResourceGatherer.prototype.SaveOutput = function () {
+	return{x:this.x, y:this.y, health:this.health, name: this.name, type: "Gatherer"};
+};
 
 BiologicalResourceGatherer.prototype.draw = function () {
 	if(onCamera(this)){
@@ -442,7 +448,9 @@ function AlienBuilder(game, spawner) {
 
 AlienBuilder.prototype = new Entity();
 AlienBuilder.prototype.constructor = AlienBuilder;
-
+AlienBuilder.prototype.SaveOutput = function () {
+	return{x:this.x, y:this.y, health:this.health, name: this.name, type: "Builder"};
+};
 AlienBuilder.prototype.draw = function () {
 	if(onCamera(this)){
   		this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, this.angle);
@@ -584,6 +592,10 @@ function Boss1(game){
 }
 Boss1.prototype = new Entity();
 Boss1.prototype.constructor = Boss1;
+Boss1.prototype.SaveOutput = function () {
+	return{x:this.x, y:this.y, health:this.health, name: this.name, type: "Boss",
+	 t1Health:this.turret1.health, t2Health:this.turret2.health, t3Health:this.turret3.health, t4Health:this.turret4.health};
+};
 
 Boss1.prototype.update = function () {
 	//console.log("boss is updating");
@@ -682,7 +694,9 @@ function BossTurret(game, boss, xOffset, yOffset){
 }
 BossTurret.prototype = new Entity();
 BossTurret.prototype.constructor = Boss1;
-
+BossTurret.prototype.SaveOutput = function () {
+	return{x:this.x, y:this.y, health:this.health, name: this.name, type: "BossTurret"};
+};
 BossTurret.prototype.update = function () {
 
 	if (this.y < -100){
@@ -837,6 +851,9 @@ function Leech(game, xIn, yIn, spawner) {
 
 Leech.prototype = new Entity();
 Leech.prototype.constructor = Leech;
+Leech.prototype.SaveOutput = function () {
+	return{x:this.x, y:this.y, health:this.health, name: this.name, type: "Leech"};
+};
 
 Leech.prototype.update = function () {
 
@@ -918,7 +935,7 @@ Leech.prototype.update = function () {
 			}
 		}
 	}
-	if(this.target !== this.game.ship && Collide(this, this.target)){
+	if(this.target && this.target !== this.game.ship && Collide(this, this.target)){
 		this.damageCooldown--;
 		this.speed = this.target.speed;
 		if(this.damageCooldown < 0) {
@@ -993,7 +1010,9 @@ function Scourge(game, xIn, yIn, spawner) {
 
 Scourge.prototype = new Entity();
 Scourge.prototype.constructor = Scourge;
-
+Scourge.prototype.SaveOutput = function () {
+	return{x:this.x, y:this.y, health:this.health, name: this.name, type: "Scourge"};
+};
 Scourge.prototype.update = function () {
 
 
@@ -1043,7 +1062,7 @@ Scourge.prototype.update = function () {
 			}
 		}
 	}
-	if(Collide(this, this.target)){
+	if(this.target && Collide(this, this.target)){
 		this.target.health -= this.damage;
 		this.removeFromWorld = true;
 
@@ -1089,90 +1108,6 @@ Scourge.prototype.draw = function () {
   Entity.prototype.draw.call(this);
 }
 /* ========================================================================================================== */
-// Spawner - Enemy
-/* ========================================================================================================== */
-function Spawner(game) {
-    //Specific to spawners:
-    this.timerReset = 500;
-    this.generateEnemy = this.timerReset;
-    this.maxSpawn = 2; // maybe make this a difficulty variable.
-
-    this.pWidth = 32;
-    this.pHeight = 32;
-    this.scale = 4;
-	this.openingAnimation = new Animation(AM.getAsset("./img/SpawnDoor.png"), this.pWidth, this.pHeight,  640, 0.1, 4, true, this.scale);
-	this.animation = new Animation(AM.getAsset("./img/SpawnDoor.png"), this.pWidth, this.pHeight, 640, 0.1, 1, true, this.scale);
-    this.name = "Enemy";
-    this.x = 0;
-    this.y = 0;
-    this.xMid = this.x + (this.pWidth * this.scale) / 2;
-    this.yMid = this.y + (this.pHeight * this.scale) / 2;
-    this.radius = 16;
-    this.speed = 0;
-    this.angle = 0;
-    this.game = game;
-    this.ctx = game.ctx;
-    this.removeFromWorld = false;
-    this.health = 50;
-
-	//the spawns that the spawner 'owns'
-	this.spawns = [
-                            new Scourge(this.game, AM.getAsset("./img/scourge.png"), this.x+this.pWidth, this.y+this.pHeight),
-                            new Scourge(this.game, AM.getAsset("./img/scourge.png"), this.x+this.pWidth, this.y+this.pHeight)
-                            //new Scourge(game, AM.getAsset("./img/scourge.png"), x + 30, y + 30),
-                            //new Scourge(game, AM.getAsset("./img/scourge.png"), x + 40, y + 40),
-                            //new Scourge(game, AM.getAsset("./img/scourge.png"), x + 50, y + 50),
-    ];
-}
-Spawner.prototype = new Entity();
-Spawner.prototype.constructor = Spawner;
-
-Spawner.prototype.update = function () {
-    this.generateEnemy--;
-    if(this.health < 1){
-      this.removeFromWorld = true;
-    }
-/* Dont need this as the spawner should remain stationary
-    //this.x += this.game.clockTick * this.speed;
-    //if (this.x > 800) this.x = -230;
-    var dx = this.game.mouseX - this.xMid-1;
-    var dy = (this.yMid - this.game.mouseY)-1;
-    // this should be the angle in radians
-    this.angle = -Math.atan2(dy,dx);
-    //if we want it in degrees
-    //this.angle *= 180 / Math.PI;
-*/
-	//timer reaches 0 Enter
-    if (this.generateEnemy === 0 ){
-		//checks all spawns if they are alive, once one is found that isn't it tips flag and inserts it to game
-        for (let i = 0, flag = true; i < this.maxSpawn && flag; i++) {
-
-            if (this.spawns[i].removeFromWorld === false) {
-                flag = false;
-                this.game.addEntity(this.spawns[i], this.x, this.y);
-            }
-        }
-		//set the timer back, even if nothing is released because of max being reached.
-        this.generateEnemy = this.timerReset;
-    }
-
-
-    Entity.prototype.update.call(this);
-}
-
-Spawner.prototype.draw = function () {
-	if(onCamera(this)){
-		if(this.generateEnemy < 25) {
-    		this.openingAnimation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, this.angle);
-		}
-		else {
-			this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, this.angle);
-		}
-	}
-    //Entity.prototype.draw.call(this);
-}
-
-/* ========================================================================================================== */
 // Stalker
 /* ========================================================================================================== */
 
@@ -1211,7 +1146,9 @@ function Stalker(game, xIn, yIn, spawner){
 
 Stalker.prototype = new Entity();
 Stalker.prototype.constructor = Stalker;
-
+Stalker.prototype.SaveOutput = function () {
+	return{x:this.x, y:this.y, health:this.health, name: this.name, type: "Stalker"};
+};
 Stalker.prototype.update = function () {
 	//if it hasn't found its target yet, or its target has become undefined
 	var closest = 100000000;

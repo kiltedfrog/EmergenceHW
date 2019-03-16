@@ -29,6 +29,9 @@ function LaserBlast(game, angle){
 
 LaserBlast.prototype = new Entity();
 LaserBlast.prototype.constructor = LaserBlast;
+LaserBlast.prototype.SaveOutput = function () {
+	return{x:this.x, y:this.y, lifetime: this.lifetime, name: this.name, type: "Laser", velocity:this.velocity};
+};
 
 LaserBlast.prototype.update = function () {
 	this.x += this.velocity.x * this.game.clockTick;
@@ -102,6 +105,9 @@ function Spit(game, adjustScale) {
 
 Spit.prototype = new Entity();
 Spit.prototype.constructor = ShipPrimary0;
+Spit.prototype.SaveOutput = function () {
+	return{x:this.x, y:this.y, lifetime: this.lifetime, name: this.name, type: "Spit", velocity: this.velocity};
+};
 
 Spit.prototype.update = function () {
 	this.angle += 0.01;

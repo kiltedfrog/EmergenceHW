@@ -624,6 +624,9 @@ Entity.prototype.generateScrap = function (count, value){
 		this.game.addEntity(scrap);
 	}
 }
+Entity.prototype.SaveOutput = function () {
+	return{x:this.x, y:this.y, name: this.name, type: "Default"};
+};
 
 Entity.prototype.generateItem = function(bonusChance) {
 	var dice = Math.random() * 100 - bonusChance;
