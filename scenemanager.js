@@ -928,7 +928,13 @@ Level1.prototype.update = function(){
 	this.game.ship.x = -100000;
 	this.game.ship.y = -100000;
 	this.game.ship.health = 100000;
-
+	var dice = Math.random() * 10000000;
+	if (dice <1000){
+		randX = Math.random() * 3750;
+		randY = Math.random() * 3750;
+		var rock = new Asteroid(this.game, randX, randY);
+		this.game.addEntity(rock);
+	}
 
 }
 
