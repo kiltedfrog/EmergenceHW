@@ -5,7 +5,7 @@ function SpaceStation(game, x, y, rock) {
     //Specific to spawners:
     this.gathererTimerReset = 200;
     this.generateGatherer = this.gathererTimerReset;
-    
+
 
     this.pWidth = 256;
     this.pHeight = 256;
@@ -34,10 +34,10 @@ function SpaceStation(game, x, y, rock) {
 	this.powerLevel = -1;
 
 	//the spawns that the spawner 'owns'
-	this.chromaTimerReset = 175;
+	this.chromaTimerReset = 75;
 	this.chromaTimer = this.chromaTimerReset;
 	this.spawns = 0;
-	this.maxSpawn = 9;
+	this.maxSpawn = 5;
 	this.maxGatherers = 5;
 	this.gatherers = 0;
 	this.maxBuilders = 1;
