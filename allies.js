@@ -281,23 +281,18 @@ MechanicalResourceGatherer.prototype.update = function () {
 
 
 	//if it hasn't found its target yet, or its target has become undefined
-	if (!this.target){
+	if (true){
 		this.angle += 0.0125;
-		var closest = this.maxTargetDistance;
+		var closest = 100000000;
 
-		//find the closest resource node to gather from
 		//find the closest resource node to gather from
 		for (var i = 0; i < this.game.resources.length; i++){
 			var ent = this.game.resources[i];
 			var d = distance(this, ent);
-
-			if(!ent.isTargettedAlly && d < closest){
+			if( d < closest){
 				closest = d;
-				if(this.target){
-					this.target.isTargettedAlly = false;
-				}
 				this.target = ent;
-				this.target.isTargettedAlly = true;
+
 			}
 		}
 	}

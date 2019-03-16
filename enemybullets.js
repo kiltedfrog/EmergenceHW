@@ -111,13 +111,13 @@ Spit.prototype.update = function () {
 	this.xMid = (this.x + (this.pWidth * this.scale / 2)) - 1;
 	this.yMid = (this.y + (this.pHeight * this.scale / 2)) - 1;
 
-	var ent = this.game.ship;
-	if(!ent.rolling && Collide(this, ent)) {
-		ent.takeDamage(this.damage);
-		this.removeFromWorld = true;
-		var effect = new SpitHit(this.game, this.xMid, this.yMid, Math.random() * 360 * Math.PI / 180, this.adjustScale);
-		this.game.addEntity(effect);
-	}
+
+	// for (var i = 0; i< this.game.allies.length; i++){
+	// 	var ent = this.game.allies[i];
+	// 	if (collide(ent, this)){
+	// 		ent.takeDamage(this.damage);
+	// 	}
+	// }
 
 	this.lifetime -= 1;
 	if (this.lifetime < 0) {

@@ -68,7 +68,7 @@ SceneManager.prototype.update = function () {
 		this.game.select = false;
 		if((this.game.level >= 1) && (this.game.pointer === 1)) {
 			console.log("tutorial");
-			this.changeScenes(new TutorialScene(this.game));
+			this.changeScenes(new Level1(this.game));
 		}
 		if((this.game.level >= 1) && (this.game.pointer === 2)) {
 			console.log("level 1");
@@ -217,71 +217,106 @@ HUD.prototype.draw = function() {
 	}
 	else {
 		// HUD minimap
-		this.game.ctx.fillStyle = "rgba(176, 196, 222, 0.25)";
-		this.game.ctx.fillRect(this.game.camera.x + 944, this.game.camera.y + 544, 240, 240);
+		this.game.ctx.fillStyle = "rgba(5, 5, 5, 1)";
+		this.game.ctx.fillRect(this.game.camera.x , this.game.camera.y , this.game.cameraCtx.canvas.width, this.game.cameraCtx.canvas.height);
 
-		this.minimapBorder.drawFrame(this.game.clockTick, this.ctx, this.game.camera.x + 928, this.game.camera.y + 528, 0);
+		//this.minimapBorder.drawFrame(this.game.clockTick, this.ctx, this.game.camera.x + 928, this.game.camera.y + 528, 0);
 
 		//minimap logic
 		for (var i = 0; i< this.minimapObjects.length; i++){
 			//parse what color to draw this dot
 			if (this.minimapObjects[i].name === "Enemy"){
 				//do math to convert world coordinates to map coordinates
-				var mapX = (this.minimapObjects[i].xMid * 240)/this.game.ctx.canvas.width;
-				var mapY = (this.minimapObjects[i].yMid * 240)/this.game.ctx.canvas.height;
-				var mapWidth = (this.minimapObjects[i].pWidth * 240 * this.minimapObjects[i].scale)/this.game.ctx.canvas.width;
-				var mapHeight = (this.minimapObjects[i].pHeight * 240 * this.minimapObjects[i].scale)/this.game.ctx.canvas.height;
+				var mapX = (this.minimapObjects[i].xMid * this.game.cameraCtx.canvas.width)/this.game.ctx.canvas.width;
+				var mapY = (this.minimapObjects[i].yMid * this.game.cameraCtx.canvas.height)/this.game.ctx.canvas.height;
+				var mapWidth = (this.minimapObjects[i].pWidth * this.game.cameraCtx.canvas.width * this.minimapObjects[i].scale)/this.game.ctx.canvas.width;
+				var mapHeight = (this.minimapObjects[i].pHeight * this.game.cameraCtx.canvas.height * this.minimapObjects[i].scale)/this.game.ctx.canvas.height;
 				//draw the dude
-				this.game.ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
-				this.game.ctx.fillRect(this.game.camera.x + 944 + mapX, this.game.camera.y + 544 + mapY, mapWidth, mapHeight);
+				this.game.ctx.fillStyle = "rgba(255, 0, 0, 1)";
+				this.game.ctx.beginPath();
+				this.game.ctx.arc(this.game.camera.x + mapX, this.game.camera.y + mapY, mapWidth/Math.PI, 0, Math.PI*2, false);
+				this.game.ctx.fill();
+//				this.game.ctx.fillRect(this.game.camera.x + mapX, this.game.camera.y + mapY, mapWidth, mapHeight);
+			} else if (this.minimapObjects[i].name === "EnemyProjectile"){
+				//do math to convert world coordinates to map coordinates
+				var mapX = (this.minimapObjects[i].xMid * this.game.cameraCtx.canvas.width)/this.game.ctx.canvas.width;
+				var mapY = (this.minimapObjects[i].yMid * this.game.cameraCtx.canvas.height)/this.game.ctx.canvas.height;
+				var mapWidth = 3;
+				var mapHeight = 3;
+				//draw the dude
+				this.game.ctx.fillStyle = "rgba(255, 0, 0, 1)";
+				this.game.ctx.beginPath();
+				this.game.ctx.arc(this.game.camera.x + mapX, this.game.camera.y + mapY, mapWidth/Math.PI, 0, Math.PI*2, false);
+				this.game.ctx.fill();
+//				this.game.ctx.fillRect(this.game.camera.x + mapX, this.game.camera.y + mapY, mapWidth, mapHeight);
 			} else if (this.minimapObjects[i].name === "Ally"){
 				//do math to convert world coordinates to map coordinates
-				var mapX = (this.minimapObjects[i].xMid * 240)/this.game.ctx.canvas.width;
-				var mapY = (this.minimapObjects[i].yMid * 240)/this.game.ctx.canvas.height;
-				var mapWidth = (this.minimapObjects[i].pWidth * 240 * this.minimapObjects[i].scale)/this.game.ctx.canvas.width;
-				var mapHeight = (this.minimapObjects[i].pHeight * 240 * this.minimapObjects[i].scale)/this.game.ctx.canvas.height;
+				var mapX = (this.minimapObjects[i].xMid * this.game.cameraCtx.canvas.width)/this.game.ctx.canvas.width;
+				var mapY = (this.minimapObjects[i].yMid * this.game.cameraCtx.canvas.height)/this.game.ctx.canvas.height;
+				var mapWidth = (this.minimapObjects[i].pWidth * this.game.cameraCtx.canvas.width * this.minimapObjects[i].scale)/this.game.ctx.canvas.width;
+				var mapHeight = (this.minimapObjects[i].pHeight * this.game.cameraCtx.canvas.height * this.minimapObjects[i].scale)/this.game.ctx.canvas.height;
 				//draw the dude
-				this.game.ctx.fillStyle = "rgba(0, 0, 255, 0.5)";
-				this.game.ctx.fillRect(this.game.camera.x + 944 + mapX, this.game.camera.y + 544 + mapY, mapWidth, mapHeight);
-			} else if (this.minimapObjects[i].name === "Player"){
+				this.game.ctx.fillStyle = "rgba(0, 0, 255, 1)";
+				this.game.ctx.beginPath();
+				this.game.ctx.arc(this.game.camera.x + mapX, this.game.camera.y + mapY, mapWidth/Math.PI, 0, Math.PI*2, false);
+				this.game.ctx.fill();
+//				this.game.ctx.fillRect(this.game.camera.x  + mapX, this.game.camera.y + mapY, mapWidth, mapHeight);
+			} else if (this.minimapObjects[i].name === "PlayerProjectile"){
 				//do math to convert world coordinates to map coordinates
-				var mapX = (this.minimapObjects[i].xMid * 240)/this.game.ctx.canvas.width;
-				var mapY = (this.minimapObjects[i].yMid * 240)/this.game.ctx.canvas.height;
-				var mapWidth = (this.minimapObjects[i].pWidth * 240 * this.minimapObjects[i].scale)/this.game.ctx.canvas.width;
-				var mapHeight = (this.minimapObjects[i].pHeight * 240 * this.minimapObjects[i].scale)/this.game.ctx.canvas.height;
+				var mapX = (this.minimapObjects[i].xMid * this.game.cameraCtx.canvas.width)/this.game.ctx.canvas.width;
+				var mapY = (this.minimapObjects[i].yMid * this.game.cameraCtx.canvas.height)/this.game.ctx.canvas.height;
+				var mapWidth = 3;
+				var mapHeight = 3;
 				//draw the dude
-				this.game.ctx.fillStyle = "rgba(0, 255, 0, 0.5)";
-				this.game.ctx.fillRect(this.game.camera.x + 944 + mapX, this.game.camera.y + 544 + mapY, mapWidth, mapHeight);
+				this.game.ctx.fillStyle = "rgba(0, 0, 255, 1)";
+				this.game.ctx.beginPath();
+				this.game.ctx.arc(this.game.camera.x + mapX, this.game.camera.y + mapY, mapWidth/Math.PI, 0, Math.PI*2, false);
+				this.game.ctx.fill();
+//				this.game.ctx.fillRect(this.game.camera.x  + mapX, this.game.camera.y + mapY, mapWidth, mapHeight);
+			} else if (this.minimapObjects[i].name === "Resource"){
+				//do math to convert world coordinates to map coordinates
+				var mapX = (this.minimapObjects[i].xMid * this.game.cameraCtx.canvas.width)/this.game.ctx.canvas.width;
+				var mapY = (this.minimapObjects[i].yMid * this.game.cameraCtx.canvas.height)/this.game.ctx.canvas.height;
+				var mapWidth = 3;
+				var mapHeight = 3;
+				//draw the dude
+				this.game.ctx.fillStyle = "rgba(189, 189, 189, 1)";
+				this.game.ctx.beginPath();
+				this.game.ctx.arc(this.game.camera.x + mapX, this.game.camera.y + mapY, mapWidth/Math.PI, 0, Math.PI*2, false);
+				this.game.ctx.fill();
+//				this.game.ctx.fillRect(this.game.camera.x  + mapX, this.game.camera.y + mapY, mapWidth, mapHeight);
 			} else if (this.minimapObjects[i].name === "Terrain"){
 				//do math to convert world coordinates to map coordinates
-				var mapX = (this.minimapObjects[i].xMid * 240)/this.game.ctx.canvas.width;
-				var mapY = (this.minimapObjects[i].yMid * 240)/this.game.ctx.canvas.height;
-				var mapWidth = (this.minimapObjects[i].pWidth * 240 * this.minimapObjects[i].scale)/this.game.ctx.canvas.width;
-				var mapHeight = (this.minimapObjects[i].pHeight * 240 * this.minimapObjects[i].scale)/this.game.ctx.canvas.height;
+				var mapX = (this.minimapObjects[i].xMid * this.game.cameraCtx.canvas.width)/this.game.ctx.canvas.width;
+				var mapY = (this.minimapObjects[i].yMid * this.game.cameraCtx.canvas.height)/this.game.ctx.canvas.height;
+				var mapWidth = (this.minimapObjects[i].pWidth * this.game.cameraCtx.canvas.width * this.minimapObjects[i].scale)/this.game.ctx.canvas.width;
+				var mapHeight = (this.minimapObjects[i].pHeight * this.game.cameraCtx.canvas.height * this.minimapObjects[i].scale)/this.game.ctx.canvas.height;
 				//draw the dude
 				if(this.minimapObjects[i].hasbase){
 					if(this.minimapObjects[i].base.name === "Ally"){
-						this.game.ctx.fillStyle = "rgba(0, 0, 255, 0.5)";
-						this.game.ctx.fillRect(this.game.camera.x + 944 + mapX, this.game.camera.y + 544 + mapY, mapWidth, mapHeight);
+						this.game.ctx.fillStyle = "rgba(0, 0, 255, 1)";
+						this.game.ctx.beginPath();
+						this.game.ctx.arc(this.game.camera.x + mapX, this.game.camera.y + mapY, mapWidth/Math.PI, 0, Math.PI*2, false);
+						this.game.ctx.fill();
+//						this.game.ctx.fillRect(this.game.camera.x  + mapX, this.game.camera.y  + mapY, mapWidth, mapHeight);
 					}else {
-						this.game.ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
-						this.game.ctx.fillRect(this.game.camera.x + 944 + mapX, this.game.camera.y + 544 + mapY, mapWidth, mapHeight);
+						this.game.ctx.fillStyle = "rgba(255, 0, 0, 1)";
+						this.game.ctx.beginPath();
+						this.game.ctx.arc(this.game.camera.x + mapX, this.game.camera.y + mapY, mapWidth/Math.PI, 0, Math.PI*2, false);
+						this.game.ctx.fill();
+//						this.game.ctx.fillRect(this.game.camera.x  + mapX, this.game.camera.y + mapY, mapWidth, mapHeight);
 					}
 				}else {
 					this.game.ctx.fillStyle = "rgba(167, 167, 167, 0.5)";
-					this.game.ctx.fillRect(this.game.camera.x + 944 + mapX, this.game.camera.y + 544 + mapY, mapWidth, mapHeight);
+					this.game.ctx.beginPath();
+					this.game.ctx.arc(this.game.camera.x + mapX, this.game.camera.y + mapY, mapWidth/Math.PI, 0, Math.PI*2, false);
+					this.game.ctx.fill();
+//					this.game.ctx.fillRect(this.game.camera.x + mapX, this.game.camera.y  + mapY, mapWidth, mapHeight);
 				}
 			}
 		}
 		var oldLinewidth = this.game.ctx.lineWidth;
-		//camera Box
-		var mapX = (this.game.camera.x * 240)/this.game.ctx.canvas.width;
-		var mapY = (this.game.camera.y * 240)/this.game.ctx.canvas.height;
-		var mapWidth = (this.game.cameraCtx.canvas.width * 240)/this.game.ctx.canvas.width;
-		var mapHeight = (this.game.cameraCtx.canvas.height * 240)/this.game.ctx.canvas.height;
-		this.game.ctx.strokeStyle = "rgba(255, 255, 255, 0.75)";
-		this.game.ctx.lineWidth = "2";
-		this.game.ctx.strokeRect(this.game.camera.x + 944 + mapX, this.game.camera.y + 544 + mapY, mapWidth, mapHeight);
+
 
 		this.game.ctx.lineWidth = oldLinewidth;
 	}
@@ -334,6 +369,19 @@ HUD.prototype.update = function () {
 		this.minimapObjects[j] = this.game.allies[i];
 		j++;
 	}
+	for (var i = 0; i< this.game.playerProjectiles.length; i++){
+		this.minimapObjects[j] = this.game.playerProjectiles[i];
+		j++;
+	}
+	for (var i = 0; i< this.game.enemyProjectiles.length; i++){
+		this.minimapObjects[j] = this.game.enemyProjectiles[i];
+		j++;
+	}
+
+	for (var i = 0; i< this.game.resources.length; i++){
+		this.minimapObjects[j] = this.game.resources[i];
+		j++;
+	}
 
 	this.minimapObjects[j] = this.game.ship;
 
@@ -375,26 +423,14 @@ TitleEffect.prototype.draw = function () {
 	this.game.ctx.fillStyle = "Blue";
 
 	this.game.ctx.textAlign = "center";
-	this.game.ctx.fillText("Super Plutonian Ace Command Earth Fighting Inter-Galactic Hero Team", this.game.camera.x + this.game.cameraCtx.canvas.width/2, this.game.camera.y + 400, 500);
-	this.game.ctx.fillText("W and S to move cursor: Enter to Select level", this.game.camera.x + this.game.cameraCtx.canvas.width/2, this.game.camera.y + 500, 400);
+	this.game.ctx.fillText("Press enter to Activate Simulation", this.game.camera.x + this.game.cameraCtx.canvas.width/2, this.game.camera.y + 400, 500);
+	this.game.ctx.fillText("press escape at any time to reset to start screen ", this.game.camera.x + this.game.cameraCtx.canvas.width/2, this.game.camera.y + 450, 400);
 
 	this.cursor = new Animation(AM.getAsset("./img/shipRollSpeed0.png"), 128, 128, 256, 0.03, 22, false, 0.5);
 
 	//This needs to flicker
-	this.game.ctx.fillText("Tutorial", this.game.camera.x + this.game.cameraCtx.canvas.width/2, this.game.camera.y + 600, 500);
-	this.game.ctx.fillText("Level 1", this.game.camera.x + this.game.cameraCtx.canvas.width/2, this.game.camera.y + 650, 500);
-	if(this.game.level > 1) {
-		this.game.ctx.fillText("Level 2", this.game.camera.x + this.game.cameraCtx.canvas.width/2, this.game.camera.y + 700, 500);
-	} else {
-		this.game.ctx.fillStyle = "Grey";
-		this.game.ctx.fillText("Level 2", this.game.camera.x + this.game.cameraCtx.canvas.width/2, this.game.camera.y + 700, 500);
-	}
-	if(this.game.level > 2) {
-		this.game.ctx.fillText("Level 3", this.game.camera.x + this.game.cameraCtx.canvas.width/2, this.game.camera.y + 750, 500);
-	} else {
-		this.game.ctx.fillStyle = "Grey";
-		this.game.ctx.fillText("Level 3", this.game.camera.x + this.game.cameraCtx.canvas.width/2, this.game.camera.y + 750, 500);
-	}
+
+
 
 	Entity.prototype.draw.call(this);
 }
@@ -450,8 +486,6 @@ ShipCursor.prototype.update = function () {
 }
 
 ShipCursor.prototype.draw = function () {
-	this.animation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, this.angle);
-	Entity.prototype.draw.call(this);
 }
 
 function SplashScene(game) {
@@ -459,7 +493,7 @@ function SplashScene(game) {
 	this.game = game;
 	this.entities = [];
 
-	this.background = new MainBackground(this.game, AM.getAsset("./img/plutoSplashPixel.png"));
+	this.background = new MainBackground(this.game, AM.getAsset("./img/milkyway.png"));
 	this.game.addEntity(this.background);
 	this.entities.push(this.background);
 
@@ -810,27 +844,30 @@ function Level1(game) {
 	// this.layer4 = new BackgroundLayer(this.game, AM.getAsset("./img/PScroll1/BackgroundVariant.png"));
 	// this.game.addEntity(this.layer4);
 	// this.entities.push(this.layer4);
-
+	var randX = Math.random() * 3750;
+	var randY = Math.random() * 3750;
 	//this spawns and places the player base
-	this.rock1 = new Asteroid(this.game, 300, 300);
+	this.rock1 = new Asteroid(this.game,randX, randY);
 	this.game.addEntity(this.rock1);
 	this.entities.push(this.rock1);
 
-	this.playerSpaceStation = new SpaceStation(this.game, 300, 300, this.rock1);
+	this.playerSpaceStation = new SpaceStation(this.game, randX, randY, this.rock1);
 	this.game.addEntity(this.playerSpaceStation);
 	this.entities.push(this.playerSpaceStation);
-	this.playerSpaceStation.resourceIncr = .05;
+	this.playerSpaceStation.resourceIncr = .15;
 
 	this.rock1.hasbase = true;
 	this.rock1.base = this.playerSpaceStation;
 
 
 	//this spawns the enemy base
-	this.rock2 = new Asteroid(this.game, 3000, 3000);
+	randX = Math.random() * 3750;
+	randY = Math.random() * 3750;
+	this.rock2 = new Asteroid(this.game, randX, randY);
 	this.game.addEntity(this.rock2);
 	this.entities.push(this.rock2);
 
-	this.enemySpaceStation = new AlienSpaceStation(this.game, 3000, 3000, this.rock2);
+	this.enemySpaceStation = new AlienSpaceStation(this.game, randX, randY, this.rock2);
 	this.enemySpaceStation.resourceIncr = .475;
 	this.game.addEntity(this.enemySpaceStation);
 	this.entities.push(this.enemySpaceStation);
@@ -840,31 +877,44 @@ function Level1(game) {
 
 
 	//Neutral rock
-	this.rock3 = new Asteroid(this.game, 1600, 300);
+	randX = Math.random() * 3750;
+	randY = Math.random() * 3750;
+	this.rock3 = new Asteroid(this.game, randX, randY);
 	this.game.addEntity(this.rock3);
 	this.entities.push(this.rock3);
 
 	//Neutral rock
-	this.rock4 = new Asteroid(this.game, 300, 1600);
+	randX = Math.random() * 3750;
+	randY = Math.random() * 3750;
+
+	this.rock4 = new Asteroid(this.game, randX, randY);
 	this.game.addEntity(this.rock4);
 	this.entities.push(this.rock4);
 
 	//Neutral rock
-	this.rock5 = new Asteroid(this.game, 2700, 2300);
+
+	randX = Math.random() * 3750;
+	randY = Math.random() * 3750;
+
+	this.rock5 = new Asteroid(this.game, randX, randY);
 	this.game.addEntity(this.rock5);
 	this.entities.push(this.rock5);
 
 	//Neutral rock
-	this.rock6 = new Asteroid(this.game, 2200, 3000);
+	randX = Math.random() * 3750;
+	randY = Math.random() * 3750;
+	this.rock6 = new Asteroid(this.game, randX, randY);
 	this.game.addEntity(this.rock6);
 	this.entities.push(this.rock6);
 
 	//Neutral rock
-	this.rock7 = new Asteroid(this.game, 2400, 600);
+	randX = Math.random() * 3750;
+	randY = Math.random() * 3750;
+	this.rock7 = new Asteroid(this.game, randX, randY);
 	this.game.addEntity(this.rock7);
 	this.entities.push(this.rock7);
 
-	this.game.playerResources = 700;
+	this.game.playerResources = 900;
 	this.game.enemyResources = 700;
 
 	this.hud = new HUD(this.game); //mandatory
@@ -875,27 +925,11 @@ function Level1(game) {
 }
 
 Level1.prototype.update = function(){
-	this.victory = false;
+	this.game.ship.x = -100000;
+	this.game.ship.y = -100000;
+	this.game.ship.health = 100000;
 
-	if (this.game.ship.health < 1){
-		//console.log("dead");
-		this.victory = false;
-		this.game.sceneManager.reset();
-		this.game.sceneManager.changeScenes(new SplashScene(this.game));
-		return;
-	}
 
-	if(this.game.numOfBosses <= 0) {
-		//console.log("All Bosses Defeated!");
-		this.victory = true;
-	}
-
-	if(this.victory) {
-		this.game.level++;
-		this.game.sceneManager.reset();
-		this.game.sceneManager.changeScenes(new VictoryScrollScene(this.game, 1));
-
-	}
 }
 
 Level1.prototype.draw = function () {}

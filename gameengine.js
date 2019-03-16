@@ -109,51 +109,20 @@ GameEngine.prototype.startInput = function () {
 	// event listeners are added here
 
 	this.cameraCtx.canvas.addEventListener("click", function (e) {
-		that.mouse = true;
-		that.mouseX = (e.x - 7 + that.camera.x);
-		that.mouseY = (e.y - 7 + that.camera.y);
-		that.wasclicked = true;
-		console.log(e);
+
 		// console.log("Left Click Event - X,Y " + e.clientX + ", " + e.clientY);
 	}, false);
 
 	this.cameraCtx.canvas.addEventListener("contextmenu", function (e) {
-		that.mouse = true;
-		that.mouseX = (e.x - 7 + that.camera.x);
-		that.mouseY = (e.y - 7 + that.camera.y);
-		// console.log(e);
-		// console.log("Right Click Event - X,Y " + e.clientX + ", " + e.clientY);
-		e.preventDefault();
+
 	}, false);
 
 	this.cameraCtx.canvas.addEventListener("mousedown", function (e) {
-		that.mouse = true;
-		that.mouseX = (e.x - 7 + that.camera.x);
-		that.mouseY = (e.y - 7 + that.camera.y);
-		// console.log(e);
-		if (e.which === 1) {
-			that.firePrimary = true;
-			// console.log("Left Mouse Down - X,Y " + e.clientX + ", " + e.clientY);
-		}
-		if (e.which === 3) {
-			that.fireSecondary = true;
-			// console.log("Right Mouse Down - X,Y " + e.clientX + ", " + e.clientY);
-		}
+
 	}, false);
 
 	this.cameraCtx.canvas.addEventListener("mouseup", function (e) {
-		that.mouse = true;
-		that.mouseX = (e.x - 7 + that.camera.x);
-		that.mouseY = (e.y - 7 + that.camera.y);
-		// console.log(e);
-		if (e.which === 1) {
-			that.firePrimary = false;
-			// console.log("Left Mouse Up - X,Y " + e.clientX + ", " + e.clientY);
-		}
-		if (e.which === 3) {
-			that.fireSecondary = false;
-			// console.log("Right Mouse Up - X,Y " + e.clientX + ", " + e.clientY);
-		}
+
 	}, false);
 
 	this.cameraCtx.canvas.addEventListener("mousemove", function (e) {
@@ -184,36 +153,13 @@ GameEngine.prototype.startInput = function () {
 	}, false);
 
 	this.cameraCtx.canvas.addEventListener("mouseout", function (e) {
-		if (that.running) {
-			that.paused = true;
-		}
+
 	}, false);
 
 	this.cameraCtx.canvas.addEventListener("keydown", function (e) {
 		//console.log("input: " + e.code);
 		e.preventDefault();
-		if (e.code === "KeyW") {
-			that.moveUp = true;
-		}
 
-		if (e.code === "KeyA") {
-			that.moveLeft = true;
-		}
-
-		if (e.code === "KeyS") {
-			that.moveDown = true;
-		}
-
-		if (e.code === "KeyD") {
-			that.moveRight = true;
-		}
-
-		if (e.code === "ShiftLeft" || e.code === "ShiftRight") {
-			that.boost = true;
-		}
-		if (e.code === "Space") {
-			that.roll = true;
-		}
 		if (e.code === "Enter") {
 			that.select = true;
 			//that.clicked = true;
@@ -227,10 +173,7 @@ GameEngine.prototype.startInput = function () {
 				that.paused = true;
 			}
 		}
-		if(e.code === "KeyO") {
-			//console.log("O detected");
-			that.tutrl = true;
-		}
+
 		if(e.code === "Escape") {
 			//console.log("menu");
 			that.menu = true;

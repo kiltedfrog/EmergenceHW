@@ -320,7 +320,7 @@ BiologicalResourceGatherer.prototype.update = function () {
 	}
 
 	//if it hasn't found its target yet, or its target has become undefined
-	if (!this.target){
+	if (true){
 		this.angle += 0.0125;
 		var closest = 100000000;
 
@@ -328,13 +328,10 @@ BiologicalResourceGatherer.prototype.update = function () {
 		for (var i = 0; i < this.game.resources.length; i++){
 			var ent = this.game.resources[i];
 			var d = distance(this, ent);
-			if(!ent.isTargettedEnemy && d < closest){
+			if( d < closest){
 				closest = d;
-				if(this.target){
-					this.target.isTargettedEnemy = false;
-				}
 				this.target = ent;
-				this.target.isTargettedEnemy = true;
+
 			}
 		}
 	}

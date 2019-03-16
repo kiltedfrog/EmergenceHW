@@ -524,7 +524,8 @@ AM.queueDownload("./img/PScroll1/Starfield1-1.png");
 AM.queueDownload("./img/PScroll1/Background3k.png");
 
 AM.queueDownload("./img/levelThreeBackground.png");
-AM.queueDownload("./img/levelThreeForeground.png");
+AM.queueDownload("./img/levelThreeForeground.png")
+AM.queueDownload("./img/milkyway.png");
 
 AM.queueDownload("./img/BloodSplatter.png");
 
@@ -647,11 +648,11 @@ AM.downloadAll(function () {
 	gameEngine.init(ctx, cameraCtx);
 	gameEngine.running = false;
 
-	
+
 	var sm = new SceneManager(gameEngine);
 	var ship = new TheShip(gameEngine);
 	var reticle = new Reticle(gameEngine);
-	
+
 
 
 	gameEngine.addEntity(ship);
