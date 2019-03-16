@@ -7,17 +7,17 @@ function SpaceStation(game, x, y, rock) {
     this.generateGatherer = this.gathererTimerReset;
     this.maxSpawn = 3; // maybe make this a difficulty variable.
 
-    this.pWidth = 512;
-    this.pHeight = 512;
-    this.scale = .5;
-	this.animation = new Animation(AM.getAsset("./img/SpaceStation.png"), this.pWidth, this.pHeight, 1024, 0.25, 2, true, this.scale);
+    this.pWidth = 256;
+    this.pHeight = 256;
+    this.scale = 1;
+	this.animation = new Animation(AM.getAsset("./img/allyBase.png"), this.pWidth, this.pHeight, 2048, 0.2, 8, true, this.scale);
     this.name = "Ally";
     this.x = x;
     this.y = y;
 	this.asteroid = rock;
     this.xMid = this.x + (this.pWidth * this.scale) / 2;
     this.yMid = this.y + (this.pHeight * this.scale) / 2;
-    this.radius = 300 * this.scale;
+    this.radius = 100 * this.scale;
     this.speed = 0;
     this.angle = 0;
     this.game = game;
@@ -26,41 +26,70 @@ function SpaceStation(game, x, y, rock) {
 	this.maxHealth = 1000;
     this.health = this.maxHealth;
 
+	this.weaponType = "P0";
+	this.shootCooldownReset = 10;
+	this.shootCooldown = this.shootCooldownReset;
+	this.shootAngle = 0;
+	this.target = null;
+	this.powerLevel = -1;
 
 	//the spawns that the spawner 'owns'
-	this.chromaTimerReset = 500;
+	this.chromaTimerReset = 275;
 	this.chromaTimer = this.chromaTimerReset;
 	this.spawns = 0;
 	this.maxGatherers = 5;
 	this.gatherers = 0;
 	this.maxBuilders = 1;
 	this.builders = 0;
+
+	this.resourceIncr = 0;
 }
 SpaceStation.prototype = new Entity();
 SpaceStation.prototype.constructor = SpaceStation;
 
 SpaceStation.prototype.update = function () {
-
+	this.game.playerResources += this.resourceIncr;
     if(this.health < 1){
       this.removeFromWorld = true;
 	  this.asteroid.hasbase = false;
 	  this.asteroid.base = null;
+	  return;
 	}
 	if(this.health < this.maxHealth){
-		this.health += 0.5;
+		this.health += 1;
 	}
 
-/* Dont need this as the spawner should remain stationary
-    //this.x += this.game.clockTick * this.speed;
-    //if (this.x > 800) this.x = -230;
-    var dx = this.game.mouseX - this.xMid-1;
-    var dy = (this.yMid - this.game.mouseY)-1;
-    // this should be the angle in radians
-    this.angle = -Math.atan2(dy,dx);
-    //if we want it in degrees
-    //this.angle *= 180 / Math.PI;
-*/
-	//timer reaches 0 Enter
+//Shooting
+	if (true){
+		var closest = 100000000;
+
+		//find the closest resource node to gather from
+		for (var i = 0; i<this.game.enemies.length; i++){
+			var ent = this.game.enemies[i];
+			var d = distance(this, ent);
+			if(d < closest){
+				closest = d;
+				this.target = ent;
+				}
+		}
+	}
+
+	// update shootingangle
+	if(this.target){
+		var dx = this.target.xMid - this.xMid;
+		var dy = this.yMid - this.target.yMid;
+		this.shootAngle = -Math.atan2(dy,dx);
+	}
+
+	if (this.target && 500 > distance(this, this.target) && this.shootCooldown < 1){
+		this.createProjectile(this.weaponType, 0, 0);
+		this.shootCooldown = this.shootCooldownReset;
+	}
+	this.shootCooldown--;
+
+
+//Spawning
+
 	if(this.gatherers < this.maxGatherers && this.generateGatherer <1){
 		var ent = new MechanicalResourceGatherer(this.game, this);
 
@@ -100,6 +129,7 @@ SpaceStation.prototype.update = function () {
 
 		ent.x = this.x + (this.pWidth * this.scale) / 2;
 		ent.y = this.y + (this.pHeight * this.scale) / 2;
+		ent.resourceIncr = this.resourceIncr;
 		this.game.addEntity(ent);
 		this.builders++;
 		this.game.playerResources -=500;
@@ -111,9 +141,9 @@ SpaceStation.prototype.update = function () {
 		if (Collide(this, ent)) {
 			this.takeDamage(ent.damage);
 			ent.removeFromWorld = true;
-			var splatter = new BloodSplatter(this.game, this.xMid, this.yMid);
-			splatter.angle = this.angle;
-			this.game.addEntity (splatter);
+			// var splatter = new BloodSplatter(this.game, this.xMid, this.yMid);
+			// splatter.angle = this.angle;
+			// this.game.addEntity (splatter);
 			if (this.health < 1) {
 				break;
 			}
@@ -124,9 +154,45 @@ SpaceStation.prototype.update = function () {
 
 	this.generateGatherer -= 1;
 	this.chromaTimer--;
-	this.angle += 0.01;
+	this.angle -= 0.001;
     Entity.prototype.update.call(this);
 }
+
+SpaceStation.prototype.createProjectile = function(type, offset, adjustAngle) {
+	var dist = 1000 * distance({xMid: this.xMid, yMid: this.yMid},
+							   {xMid: this.target.xMid, yMid: this.target.yMid});
+	var angle = this.shootAngle + adjustAngle;
+	if (type === "P0") {
+		var projectile = new ShipPrimary0(this.game, 1);
+	}
+	if (type === "P1") {
+		var projectile = new ShipPrimary1(this.game, 1);
+	}
+	if (type === "P2") {
+		var projectile = new ShipPrimary2(this.game, 1);
+	}
+	if (type === "P3") {
+		var projectile = new ShipPrimary3(this.game, 1);
+	}
+	if (type === "S0") {
+		var projectile = new ShipSecondary0(this.game);
+	}
+	if (type === "S1") {
+		var projectile = new ShipSecondary1(this.game);
+	}
+	var target = {x: Math.cos(angle) * dist + this.xMid,
+				  y: Math.sin(angle) * dist + this.yMid};
+	var dir = direction(target, {x: this.xMid, y: this.yMid});
+	projectile.damage = projectile.damage + (projectile.damage * this.powerLevel / 2);
+	projectile.x = this.xMid - projectile.pWidth * projectile.scale / 2;
+	projectile.y = this.yMid - projectile.pHeight * projectile.scale / 2;
+	projectile.velocity.x = dir.x * projectile.maxSpeed;
+	projectile.velocity.y = dir.y * projectile.maxSpeed;
+	projectile.angle = angle;
+
+	this.game.addEntity(projectile);
+}
+
 
 SpaceStation.prototype.draw = function () {
 	if(onCamera(this)){
@@ -136,7 +202,7 @@ SpaceStation.prototype.draw = function () {
 		this.ctx.beginPath();
 		this.ctx.strokeStyle = "Red";
 		this.ctx.lineWidth = 1;
-		this.ctx.arc(this.xMid, this.yMid, this.radiusa, 0, Math.PI * 2, false);
+		this.ctx.arc(this.xMid, this.yMid, this.radius, 0, Math.PI * 2, false);
 		this.ctx.stroke();
 		this.ctx.closePath();
 	}
@@ -150,16 +216,14 @@ SpaceStation.prototype.draw = function () {
 function MechanicalResourceGatherer(game, spawner) {
 
 
-	this.pWidth = 40;
-	this.pHeight = 40;
-	this.scale = 1;
+	this.pWidth = 128;
+	this.pHeight = 128;
+	this.scale = 0.6;
 
   	// Stuff gets passed into an animation object in this order:
   	// spriteSheet, frameWidth, frameHeight, sheetWidth, frameDuration, frames, loop, scale
 
-	this.animation = new Animation(AM.getAsset("./img/MechanicalResourceGatherer.png"),
-								 this.pWidth, this.pHeight,
-								 80, .125, 2, true, this.scale);
+	this.animation = new Animation(AM.getAsset("./img/allyDrone.png"), this.pWidth, this.pHeight, 256, 0.03, 2, true, this.scale);
 	this.game = game;
 	this.ctx = game.ctx;
 	this.name = "Ally";
@@ -175,7 +239,7 @@ function MechanicalResourceGatherer(game, spawner) {
 //this is for collision
 	this.xMid = this.x + (this.pWidth * this.scale) / 2;
 	this.yMid = this.y + (this.pHeight * this.scale) / 2;
-	this.radius = 18 * this.scale;
+	this.radius = 30 * this.scale;
 
 //this is for movement
 	this.speed = .35;
@@ -280,25 +344,8 @@ MechanicalResourceGatherer.prototype.update = function () {
 		if(this.target){
 			this.target.isTargettedAlly = false;
 		}
-		for(var i = 0; i< 3; i++){
-			var scrap = new Scrap(this.game, 3);
-			scrap.x = this.xMid - (scrap.pWidth*scrap.scale /2);
-			scrap.y = this.yMid - (scrap.pHeight*scrap.scale /2);
-			scrap.xMid = this.xMid;
-			scrap.yMid = this.yMid;
+		this.generateScrap(3,3);
 
-			this.game.addEntity(scrap);
-		}
-		//does it drop a powerup?
-		// if (Math.random() * 100 < 20) { //the 20 here is the % chance it drops
-		// 	var spreader = new Spreader(this.game);
-		// 	spreader.x = this.xMid - (spreader.pWidth * spreader.scale / 2);
-		// 	spreader.y = this.yMid - (spreader.pHeight * spreader.scale / 2);
-		// 	spreader.xMid = this.xMid;
-		// 	spreader.yMid = this.yMid;
-		//
-		// 	this.game.addEntity(spreader);
-		// }
 
 		this.removeFromWorld = true;
 	}
@@ -323,14 +370,12 @@ function PlayerBuilder(game, spawner) {
 
 	this.pWidth = 250;
 	this.pHeight = 268;
-	this.scale = .5;
+	this.scale = 0.5;
 
   	// Stuff gets passed into an animation object in this order:
   	// spriteSheet, frameWidth, frameHeight, sheetWidth, frameDuration, frames, loop, scale
 
-	this.animation = new Animation(AM.getAsset("./img/PlayerBuilder.png"),
-								 this.pWidth, this.pHeight,
-								 1500, .125, 6, true, this.scale);
+	this.animation = new Animation(AM.getAsset("./img/PlayerBuilder.png"), this.pWidth, this.pHeight, 1500, .125, 6, true, this.scale);
 	this.game = game;
 	this.ctx = game.ctx;
 	this.name = "Ally";
@@ -346,14 +391,14 @@ function PlayerBuilder(game, spawner) {
 //this is for collision
 	this.xMid = this.x + (this.pWidth * this.scale) / 2;
 	this.yMid = this.y + (this.pHeight * this.scale) / 2;
-	this.radius = 180 * this.scale;
+	this.radius = 200 * this.scale;
 
 //this is for movement
 	this.speed = .135;
 
 
 	this.target = null;
-
+	this.resourceIncr = 0;
 
 }
 
@@ -415,6 +460,7 @@ PlayerBuilder.prototype.update = function () {
 	if (this.target && Collide(this, this.target) && !this.target.hasbase){
 		this.target.hasbase = true;
 		var base = new SpaceStation(this.game, this.target.x, this.target.y, this.target);
+		base.resourceIncr = this.resourceIncr;
 		this.target.base = base;
 		this.game.addEntity(base);
 
@@ -458,6 +504,7 @@ PlayerBuilder.prototype.update = function () {
 
 	//does it blow up when it dies?
 	if (this.removeFromWorld) {
+
 		var explosion = new SpaceExplosion(this.game, this.xMid, this.yMid, this.angle);
 		this.game.addEntity(explosion);
 		this.spawner.builders--;
@@ -474,10 +521,10 @@ PlayerBuilder.prototype.update = function () {
 
 function PurpleChroma(game, spawner) {
 
-	this.pWidth = 32;
-	this.pHeight = 32;
-	this.scale = 2;
-	this.animation = new Animation(AM.getAsset("./img/PurpleChroma.png"), this.pWidth, this.pHeight, 64, 0.2, 2, true, this.scale);
+	this.pWidth = 128;
+	this.pHeight = 128;
+	this.scale = 0.5;
+	this.animation = new Animation(AM.getAsset("./img/allyShip1.png"), this.pWidth, this.pHeight, 256, 0.03, 2, true, this.scale);
 	this.angle = 0;
 	this.spawner = spawner;
 	this.name = "Ally";
@@ -488,7 +535,7 @@ function PurpleChroma(game, spawner) {
 	this.y = 0;
 	this.xMid = (this.x + (this.pWidth * this.scale / 2)) - 1;
 	this.yMid = (this.y + (this.pHeight * this.scale / 2)) - 1;
-	this.radius = 5.4 * this.scale;
+	this.radius = 36 * this.scale;
 	this.game = game;
 	this.ctx = game.ctx;
 	this.removeFromWorld = false;
@@ -646,10 +693,10 @@ PurpleChroma.prototype.draw = function () {
 
 function GreenChroma(game, spawner) {
 
-	this.pWidth = 32;
-	this.pHeight = 32;
-	this.scale = 2;
-	this.animation = new Animation(AM.getAsset("./img/GreenChroma.png"), this.pWidth, this.pHeight, 64, 0.2, 2, true, this.scale);
+	this.pWidth = 128;
+	this.pHeight = 128;
+	this.scale = 0.75;
+	this.animation = new Animation(AM.getAsset("./img/allyShip2.png"), this.pWidth, this.pHeight, 256, 0.03, 2, true, this.scale);
 	this.angle = 0;
 	this.spawner = spawner;
 	this.name = "Ally";
@@ -660,7 +707,7 @@ function GreenChroma(game, spawner) {
 	this.y = 0;
 	this.xMid = (this.x + (this.pWidth * this.scale / 2)) - 1;
 	this.yMid = (this.y + (this.pHeight * this.scale / 2)) - 1;
-	this.radius = 5.4 * this.scale;
+	this.radius = 48 * this.scale;
 	this.game = game;
 	this.ctx = game.ctx;
 	this.removeFromWorld = false;
@@ -815,10 +862,10 @@ GreenChroma.prototype.draw = function () {
 
 function RedChroma(game, spawner) {
 
-	this.pWidth = 32;
-	this.pHeight = 32;
-	this.scale = 2;
-	this.animation = new Animation(AM.getAsset("./img/RedChroma.png"), this.pWidth, this.pHeight, 64, 0.2, 2, true, this.scale);
+	this.pWidth = 128;
+	this.pHeight = 128;
+	this.scale = 0.5;
+	this.animation = new Animation(AM.getAsset("./img/allyShip1.png"), this.pWidth, this.pHeight, 256, 0.03, 2, true, this.scale);
 	this.angle = 0;
 	this.spawner = spawner;
 	this.name = "Ally";
@@ -829,7 +876,7 @@ function RedChroma(game, spawner) {
 	this.y = 0;
 	this.xMid = (this.x + (this.pWidth * this.scale / 2)) - 1;
 	this.yMid = (this.y + (this.pHeight * this.scale / 2)) - 1;
-	this.radius = 5.4 * this.scale;
+	this.radius = 36 * this.scale;
 	this.game = game;
 	this.ctx = game.ctx;
 	this.removeFromWorld = false;
@@ -985,10 +1032,10 @@ RedChroma.prototype.draw = function () {
 
 function BlackWhiteChroma(game, spawner) {
 
-	this.pWidth = 32;
-	this.pHeight = 32;
-	this.scale = 2;
-	this.animation = new Animation(AM.getAsset("./img/BlackWhiteChroma.png"), this.pWidth, this.pHeight, 64, 0.2, 2, true, this.scale);
+	this.pWidth = 128;
+	this.pHeight = 128;
+	this.scale = 0.75;
+	this.animation = new Animation(AM.getAsset("./img/allyShip2.png"), this.pWidth, this.pHeight, 256, 0.03, 2, true, this.scale);
 	this.angle = 0;
 	this.spawner = spawner;
 	this.name = "Ally";
@@ -999,7 +1046,7 @@ function BlackWhiteChroma(game, spawner) {
 	this.y = 0;
 	this.xMid = (this.x + (this.pWidth * this.scale / 2)) - 1;
 	this.yMid = (this.y + (this.pHeight * this.scale / 2)) - 1;
-	this.radius = 5.4 * this.scale;
+	this.radius = 48 * this.scale;
 	this.game = game;
 	this.ctx = game.ctx;
 	this.removeFromWorld = false;
