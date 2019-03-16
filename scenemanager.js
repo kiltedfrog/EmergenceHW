@@ -854,7 +854,7 @@ function Level1(game) {
 	this.playerSpaceStation = new SpaceStation(this.game, randX, randY, this.rock1);
 	this.game.addEntity(this.playerSpaceStation);
 	this.entities.push(this.playerSpaceStation);
-	this.playerSpaceStation.resourceIncr = .15;
+	this.playerSpaceStation.resourceIncr = .25;
 
 	this.rock1.hasbase = true;
 	this.rock1.base = this.playerSpaceStation;
